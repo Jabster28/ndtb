@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!-- just a bare-bones admin panel, shows the list of connected sockets -->
+<html>
+  <head>
+    <style>
+      /* nav */
+      #connected {
+        text-align: center;
+        background-color: #231467;
+        padding: 5% 40%;
+        margin: 2%;
+      }
+      #agents {
+        text-align: center;
+        background-color: #231467;
+        padding: 5% 10%;
+        margin: 2%;
+      }
+      body {
+        margin: 0;
+        background-color: #170d45;
+      }
+      .nav {
+        text-align: center;
+        overflow: hidden;
+        background-color: #5e35b1;
+        color: #9575cd;
+        margin: 0;
+        top: 0;
+        font-size: large;
+        width: 100%;
+      }
+      #osdiv {
+        background-color: #170d45;
+        padding: 5% 20%;
+        list-style-type: none;
+      }
+      /* main */
+      .main {
+        margin-top: 30px; /* no overlap */
+        align-items: center;
+        color: wheat;
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/eruda/2.3.3/eruda.min.js"></script>
+    <script>
+      eruda.init();
+      started = false;
+      socket = io();
+      $(() => {
+        // connect to websocket
+        // log joins to console
+        socket.on('hd', e => {
+          $('#num').text(1 + parseInt($('#num').text()));
+        });
+        $('#start').click(() => {
+          started = true;
+          socket.emit('start');
+          $('#start').attr('disabled', 'true');
+        });
+        $('#stop').click(() => {
+          started = false;
+          socket.emit('stop');
+          $('#start').attr('disabled', 'false');
+        });
+        $('#sd').click(() => {
+          socket.emit('redo');
+        });
+      });
+    </script>
+    <title>Hidden access panel</title>
+  </head>
+
+  <body>
+    <div class="nav">
+      secret admin panel that no-one can access
+    </div>
+    <div class="main">
+      <div class="stats">
+        <div id="connected">
+          <h1>Pieces dropped</h1>
+          <h3 id="num">0</h3>
+        </div>
+        <div id="agents">
+          <h1>Controls</h1>
+          <div id="osdiv">
+            <button id="start">start</button>
+            <button id="stop">stop</button>
+            <button id="sd">sd</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
