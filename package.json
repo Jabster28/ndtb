@@ -13,16 +13,21 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "check": "gts check",
     "clean": "gts clean",
-    "compile": "tsc",
+    "compile": "tsc && node build/src/closure.js",
     "fix": "gts fix",
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
     "posttest": "yarn run check",
-    "start": "yarn compile && node build/src/index.js"
+    "start": "tsc && node build/src/index.js",
+    "go": "yarn compile && node build/src/compiledIndex.js"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/node": "^13.11.1",
+    "axios": "^0.19.2",
+    "better-docs": "^2.0.1",
     "gts": "^2.0.2",
+    "querystring": "^0.2.0",
     "typescript": "^3.8.3"
   },
   "dependencies": {
