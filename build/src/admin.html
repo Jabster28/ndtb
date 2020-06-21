@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- just a bare-bones admin panel, shows the list of connected sockets -->
+<!-- just a bare-bones admin panel, shows some stuff -->
 <html>
   <head>
     <style>
@@ -30,7 +30,7 @@
         font-size: large;
         width: 100%;
       }
-      #osdiv {
+      #idk {
         background-color: #170d45;
         padding: 5% 20%;
         list-style-type: none;
@@ -63,7 +63,7 @@
         $('#stop').click(() => {
           started = false;
           socket.emit('stop');
-          $('#start').attr('disabled', 'false');
+          $('#start').removeAttr('disabled');
         });
         $('#sd').click(() => {
           socket.emit('redo');
@@ -85,7 +85,7 @@
         </div>
         <div id="agents">
           <h1>Controls</h1>
-          <div id="osdiv">
+          <div id="idk">
             <button id="start">start</button>
             <button id="stop">stop</button>
             <button id="sd">sd</button>
