@@ -1,6 +1,6 @@
 {
   "name": "ndtb",
-  "version": "0.0.0",
+  "version": "0.0.1-a.0",
   "description": "A bot made for finding loops for the 'New DT Cannon'",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
