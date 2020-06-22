@@ -11,26 +11,59 @@ const server = http.createServer(app);
 const io = socket(server);
 
 /**
- * A Tetris mino, can be undefined
- * @alias Piece
+ * @typedef {(string|undefined)} Piece - A string that represents a Tetris mino, can be undefined
  */
-export type Piece = 't' | 'i' | 'o' | 's' | 'z' | 'l' | 'j' | undefined;
+declare type Piece = 't' | 'i' | 'o' | 's' | 'z' | 'l' | 'j' | undefined;
 
 // some vars
 let run = true;
 let spin = true;
+/**
+ * Whether the current state of the board can be used to complete a New DT Cannon. If this is false, the bot essentially gives up.
+ * @type {boolean}
+ */
 let canDo = true;
-let x = 0;
-let y = 0;
+/**
+ * Object with X and Y of where to check for the current piece. Every piece should overlap this pixel.
+ * @type {Object<string,number>}
+ */
+const currentPos: {[dim: string]: number} = {
+  x: 630,
+  y: 135,
+};
+/**
+ * Array of objects with X and Y of where to check for the next pieces. Every piece should overlap the pixels.
+ * @type {Array<Object<string,number>>}
+ */
+const nextPos: {[dim: string]: number}[] = [
+  {
+    x: 826,
+    y: 230,
+  },
+];
 let hex = '';
+/** @type {Piece} */
 let current: Piece = undefined;
+/**
+ * The currently held piece. Undefined if nothing is held
+ * @type {Piece}
+ */
 let heldPiece: Piece = undefined;
+/**
+ * The last known piece in the matrix. Used for if gravity is enabled and the piece has moved from the recognition position
+ * @type {Piece}
+ */
 let lastPiece: Piece = undefined;
+/**
+ * List of pieces in the "Next" section
+ * @type {Piece[]}
+ */
 let bag: Piece[] = [];
 /**
  * Object mapping the hex colors of pieces in the matrix to their piece name
+ * @type {Object<string,Piece>}
  */
-const currentPieceMap: {[key: string]: Piece} = {
+const currentPieceMap: {[hexColor: string]: Piece} = {
   a9fd5e: 's',
   eb47ce: 't',
   '00fcb9': 'i',
@@ -40,9 +73,10 @@ const currentPieceMap: {[key: string]: Piece} = {
   ff3244: 'z',
 };
 /**
- * Object mapping the hex colors of pieces in the next box to their piece name
+ * Array of objects mapping the hex colors of pieces in the next box to their piece name
+ * @type {Array<Object<string,Piece>>}
  */
-const nextPieceMap: {[key: string]: Piece}[] = [
+const nextPieceMap: {[hexColor: string]: Piece}[] = [
   {
     ae469a: 't',
     bc6941: 'l',
@@ -58,7 +92,7 @@ const nextPieceMap: {[key: string]: Piece}[] = [
 
 /**
  * Sleep function
- * @param ms Time to sleep in milliseconds
+ * @param {number} ms Time to sleep in milliseconds
  */
 const sleep = (ms: number) => {
   return new Promise(res => {
@@ -77,12 +111,9 @@ const calcStuff = async function () {
   // console.log(`last bag ${lastBag}`);
 
   bag = [];
-  // current piece
-  x = 630;
-  y = 135;
   await sleep(3);
 
-  hex = robot.getPixelColor(x, y);
+  hex = robot.getPixelColor(currentPos.x, currentPos.y);
   current = currentPieceMap[hex];
   // console.log(current);
   // console.log(hex);
@@ -99,9 +130,7 @@ const calcStuff = async function () {
   }
   // console.log(`hex current ${hex}`);
   // next piece
-  x = 826;
-  y = 230;
-  hex = robot.getPixelColor(x, y);
+  hex = robot.getPixelColor(nextPos[0].x, nextPos[0].y);
 
   bag.push(nextPieceMap[0][hex]);
   // console.log(`hex next ${hex}`);
@@ -120,7 +149,8 @@ const calcStuff = async function () {
 
 /**
  * DAS all the way to the specified direction
- * @param {boolean} [goRight=true] Whether the piece should go right or not. Defaults to true
+ * @param {boolean} [right=true] Whether the piece should go right or not. Defaults to true
+ * @category PieceMovement
  */
 const das = async (right = true) => {
   if (right) {
@@ -136,7 +166,8 @@ const das = async (right = true) => {
   }
 };
 /**
- * Soft drops
+ * Soft drops the current piece
+ * @category PieceMovement
  */
 const sd = async () => {
   robot.keyToggle('down', 'down');
@@ -145,7 +176,8 @@ const sd = async () => {
   await sleep(5);
 };
 /**
- * Hard drops
+ * Hard drops the current piece
+ * @category PieceMovement
  */
 const hd = async () => {
   io.emit('hd');
@@ -157,8 +189,9 @@ const hd = async () => {
   // );
 };
 /**
- * Tries to hold the specified {@link Piece}. If it can't, it sets canDo to false
+ * Tries to hold the specified {@link Piece} and sets it to {@link heldPiece}. If it can't, it sets {@link canDo} to false
  * @param {Piece} piece - The piece to hold
+ * @category PieceMovement
  */
 const hold = async (piece: Piece) => {
   if (piece === undefined) return;
@@ -175,35 +208,39 @@ const hold = async (piece: Piece) => {
   lastPiece = undefined;
   current = undefined;
   canHold = false;
-  await calcStuff();
-  await sleep(20);
+  await sleep(40);
 };
 /**
  * Rotates clockwise
+ * @category PieceMovement
  */
 const cw = async () => {
   robot.keyTap('up');
 };
 /**
  * Rotates counter-clockwise
+ * @category PieceMovement
  */
 const ccw = async () => {
   robot.keyTap('z');
 };
 /**
- * Does a 180 spin (assuming TETR.IO's kick table)
+ * Does a 180 spin
+ * @category PieceMovement
  */
 const one80 = async () => {
   robot.keyTap('a');
 };
 /**
  * Moves one square right
+ * @category PieceMovement
  */
 const right = async () => {
   robot.keyTap('right');
 };
 /**
  * Moves one square left
+ * @category PieceMovement
  */
 const left = async () => {
   robot.keyTap('left');
@@ -216,20 +253,62 @@ const left = async () => {
  */
 let canHold = true;
 /**
- * What bag opener are we using. Can be 1-3
+ * Which bag opener will the bot using. Can be any number from 1-3
  * @type {number}
  */
 let style: number | null = null;
+/**
+ * Which perfect clear type will the bot using. Can be k (kaidan, stairs), a (anchor) or t (tsm>tetris)
+ * @type {number}
+ */
 let pcType: string | undefined = undefined;
 let pcStep: string | undefined = undefined;
+console.log(pcStep);
+/** How many O's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
 let os = 0;
-let is = 0;
-let ss = 0;
-let zs = 0;
-let ls = 0;
-let js = 0;
-let ts = 0;
 
+/** How many I's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
+let is = 0;
+
+/** How many S's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
+let ss = 0;
+
+/** How many Z's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
+let zs = 0;
+
+/** How many L's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
+let ls = 0;
+
+/** How many J's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
+let js = 0;
+
+/** How many T's have been placed since the last Perfect Clear
+ * @type {number}
+ * @category PieceCounters
+ */
+let ts = 0;
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const o = async () => {
   if (os === 0) {
     if (style === 1 || style === 2) {
@@ -401,6 +480,10 @@ const o = async () => {
     }
   }
 };
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const i = async () => {
   if (is === 0) {
     if (style === 1 || style === 3) {
@@ -510,6 +593,10 @@ const i = async () => {
     }
   }
 };
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const s = async () => {
   if (ss === 0) {
     if (style === 1) {
@@ -629,6 +716,10 @@ const s = async () => {
     }
   }
 };
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const z = async () => {
   if (zs === 0) {
     // await das(false);
@@ -731,6 +822,10 @@ const z = async () => {
     }
   }
 };
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const j = async () => {
   if (js === 0) {
     if (style === 1) {
@@ -861,6 +956,10 @@ const j = async () => {
     }
   }
 };
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const l = async () => {
   if (ls === 0) {
     if (style === 1) {
@@ -947,9 +1046,19 @@ const l = async () => {
         await hd();
         ls++;
       }
+    } else if (pcType === 'a') {
+      console.log(`${current?.green} kaidan, dropping`);
+      await cw();
+      await das();
+      await hd();
+      ls++;
     }
   }
 };
+/**
+ * Decides how to place the piece depending on other factors
+ * @category PiecePlacementDecider
+ */
 const t = async () => {
   if (ts === 0) {
     if (style === 1 && ss) {
@@ -1083,7 +1192,7 @@ const t = async () => {
     }
   }
 };
-// SEMICOLON
+/** Starts the bot, and waits for the first piece */
 const start = async () => {
   run = true;
   console.log('ready'.bold);
@@ -1171,9 +1280,9 @@ const start = async () => {
 // 650, 135, ff844a ff3a4c ed4fd1 00fcbd 6e51df fed95b 2c2b3c old
 // 630, 135, a9fd5e eb47ce 00fcb9 ffd455 6649dd ff7f43 ff3244 current
 // 826, 230, ae469a bc6941 84b84e be3943 4fe6b8 5947a4 e6c970 next 1
-
+app.use('/doc', express.static('out'));
 app.get('/admin', (_req, res) => {
-  res.sendFile(path.join(__dirname, 'admin.html'));
+  res.sendFile(join(__dirname, 'admin.html'));
 });
 
 io.on('connection', socket => {
