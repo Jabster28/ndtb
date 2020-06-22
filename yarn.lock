@@ -225,7 +225,7 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@types/axios@^0.14.0":
+"@types/axios@0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@types/axios/-/axios-0.14.0.tgz#ec2300fbe7d7dddd7eb9d3abf87999964cafce46"
   integrity sha1-7CMA++fX3d1+udOr+HmZlkyvzkY=
@@ -315,7 +315,7 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.13.tgz#ee1128e881b874c371374c1f72201893616417c9"
   integrity sha512-rouEWBImiRaSJsVA+ITTFM6ZxibuAlTuNOCyxVbwreu6k6+ujs7DfnU9o+PShFhET78pMBl3eH+AGSI5eOTkPA==
 
-"@types/node@^13.11.1":
+"@types/node@13.13.12":
   version "13.13.12"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.12.tgz#9c72e865380a7dc99999ea0ef20fc9635b503d20"
   integrity sha512-zWz/8NEPxoXNT9YyF2osqyA9WjssZukYpgI4UYZpOjcyqwIUqWGkcCionaEb9Ki+FULyPyvNFpg/329Kd2/pbw==
@@ -569,7 +569,7 @@ async@^2.1.4:
   dependencies:
     lodash "^4.17.14"
 
-axios@*, axios@^0.19.2:
+axios@*, axios@0.19.2:
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
   integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
@@ -631,7 +631,7 @@ better-assert@~1.0.0:
   dependencies:
     callsite "1.0.0"
 
-better-docs@^2.0.1:
+better-docs@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/better-docs/-/better-docs-2.0.1.tgz#37b010d3db5985ccf954f1657fda99cc9af40d8f"
   integrity sha512-X9XLAhj+tKxkjVR+Jn/RcbYNSO5D8oN+TdF/4tdp6Tpd3BiCXj8ZvYUwj30MkhTkfzUQDPkANNHtLqqZbtkqig==
@@ -1644,7 +1644,7 @@ graceful-fs@^4.1.2:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
 
-gts@^2.0.2:
+gts@2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/gts/-/gts-2.0.2.tgz#b8b28de99361b5c5c24db30a375a0f546bbc04a4"
   integrity sha512-SLytzl2IqKXf6kGULwr07XQ9lVsvjrzFD3OAA7DEfIQYuD+lKBPt/cZ/RYGxaWerY4PTfmnXT7KdxEr9Ec8uHQ==
@@ -2731,7 +2731,7 @@ qs@6.7.0:
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
 
-querystring@^0.2.0:
+querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
@@ -3315,7 +3315,7 @@ table@^5.2.3:
     slice-ansi "^2.1.0"
     string-width "^3.0.0"
 
-taffydb@^2.7.3:
+taffydb@2.7.3:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/taffydb/-/taffydb-2.7.3.tgz#2ad37169629498fca5bc84243096d3cde0ec3a34"
   integrity sha1-KtNxaWKUmPylvIQkMJbTzeDsOjQ=
@@ -3464,7 +3464,7 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^3.2.2, typescript@^3.7.5, typescript@^3.8.3:
+typescript@3.9.5, typescript@^3.2.2, typescript@^3.7.5:
   version "3.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
   integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
