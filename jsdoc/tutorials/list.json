@@ -1,0 +1,17 @@
+{
+  "1starter": {
+    "title": "Before we begin..."
+  },
+  "2calibrate": {
+    "title": "How to calibrate the bot"
+  },
+  "3config": {
+    "title": "TETR.IO Configuration"
+  },
+  "4colors": {
+    "title": "Setting the colors correctly"
+  },
+  "compile": {
+    "title": "Compiling the source code"
+  }
+}

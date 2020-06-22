@@ -14,12 +14,13 @@
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc && node build/src/closure.js",
+    "docs": "jsdoc -c jsdoc.json",
     "fix": "gts fix",
+    "go": "yarn compile && node build/src/compiledIndex.js",
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
     "posttest": "yarn run check",
-    "start": "tsc && node build/src/index.js",
-    "go": "yarn compile && node build/src/compiledIndex.js"
+    "start": "tsc && node build/src/index.js"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -28,6 +29,7 @@
     "better-docs": "^2.0.1",
     "gts": "^2.0.2",
     "querystring": "^0.2.0",
+    "taffydb": "^2.7.3",
     "typescript": "^3.8.3"
   },
   "dependencies": {
