@@ -1,13 +1,12 @@
 // imports
-import * as http from 'http';
+import {createServer} from 'http';
 import socket from 'socket.io';
 import express from 'express';
-import * as path from 'path';
-// import {Piece} from './piece';
+import {join} from 'path';
 import 'colors';
 import * as robot from 'robotjs';
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 const io = socket(server);
 
 /**
