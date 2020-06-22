@@ -1,10 +1,10 @@
 Before we begin calibrating the bot, you should have an understanding of how the tools we have here work. Feel free to skip any parts that you may know already, and you can skip to [here](tutorial-calibrate.html) if you already know how `npm`, `yarn` and `tsc` work.
 
-## NPM
+## NPM
 
 NPM (Node Package Manager) is a tool and service for easily hosting JavaScript modules. It is also the main build tool for NodeJS, and comes with some handy commands along with some that I've made myself.
 
-### Scripts
+### Scripts
 
 If you look in `package.json`, you'll see a `scripts` section that looks something like this:
 
