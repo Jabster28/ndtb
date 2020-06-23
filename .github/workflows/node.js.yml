@@ -26,7 +26,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: sudo apt-get install libxtst-dev
     - run: yarn
-    - run: yarn test
+    - run: yarn unit
     - run: yarn coverage
     - run: yarn gts check
     - run: yarn compile
