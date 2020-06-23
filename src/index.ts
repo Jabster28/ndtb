@@ -1,10 +1,14 @@
-// imports
+let mocha = false;
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+if (typeof global.it === 'function') {
+  console.log('Hello mocha!');
+  mocha = true;
+}
 import {createServer} from 'http';
-import socket from 'socket.io';
 import express from 'express';
 import {join} from 'path';
 import 'colors';
-import * as robot from 'robotjs';
 import {
   calcStuff,
   Piece,
@@ -31,8 +35,6 @@ import {
 } from './helpers';
 // stuff
 const app = express();
-const server = createServer(app);
-const io = socket(server);
 
 canHold(true);
 canDo(true);
@@ -1021,40 +1023,18 @@ const start = async () => {
         default:
       }
     } else {
-      if (spin) {
-        await cw();
-        await sleep(20);
-      } else {
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        await hd();
-        canHold = true;
-        style = null;
-        current = undefined;
-        lastPiece = undefined;
-        pcType = undefined;
-        pcStep = undefined;
-        bag = [];
-        os = 0;
-        is = 0;
-        ss = 0;
-        zs = 0;
-        ls = 0;
-        js = 0;
-        ts = 0;
-        canDo = true;
-        await sleep(6000);
-        console.log('okay, recovered');
-      }
+      pcType = undefined;
+      pcStep = undefined;
+      style = null;
+
+      os = 0;
+      is = 0;
+      ss = 0;
+      zs = 0;
+      ls = 0;
+      js = 0;
+      ts = 0;
+      await fail(spin);
     }
   }
   // sd();
@@ -1067,25 +1047,91 @@ const start = async () => {
 // 650, 135, ff844a ff3a4c ed4fd1 00fcbd 6e51df fed95b 2c2b3c old
 // 630, 135, a9fd5e eb47ce 00fcb9 ffd455 6649dd ff7f43 ff3244 current
 // 826, 230, ae469a bc6941 84b84e be3943 4fe6b8 5947a4 e6c970 next 1
-app.use('/doc', express.static('out'));
-app.get('/admin', (_req, res) => {
-  res.sendFile(join(__dirname, 'admin.html'));
-});
+if (!mocha) {
+  import('socket.io').then(s => {
+    const socket = s.default;
+    const server = createServer(app);
+    const io = socket(server);
 
-io.on('connection', socket => {
-  socket.on('start', () => start());
-  socket.on('stop', () => {
-    run = false;
-    console.log('stopped'.red);
-  });
-  socket.on('redo', () => {
-    spin = false;
-    canDo = false;
-    console.log('committing sudoku...'.red);
-  });
-});
+    app.use('/doc', express.static('out'));
+    app.get('/admin', (_req, res) => {
+      res.sendFile(join(__dirname, 'admin.html'));
+    });
 
-server.listen(8080, () => {
-  console.info(`${'online'.green} running on port 8080`);
-});
-start();
+    io.on('connection', socket => {
+      socket.on('start', () => start());
+      socket.on('stop', () => {
+        run = false;
+        console.log('stopped'.red);
+      });
+      socket.on('redo', () => {
+        spin = false;
+        canDo(false);
+        console.log('committing sudoku...'.red);
+      });
+    });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    server.listen(8080, () => {
+      console.info(`${'online'.green} running on port 8080`);
+    });
+    start();
+  });
+}
+
+export const test = async (
+  newBag: Piece[],
+  values: {[piece: string]: number}
+) => {
+  console.log('Running test...');
+  setBag(newBag);
+  onHD(() => {
+    console.log(current.green);
+    setCurrent(bag[0]);
+    bag.shift();
+  });
+  setCurrent(bag[0]);
+  bag.shift();
+  is = values.i;
+  js = values.j;
+  ls = values.l;
+  ss = values.s;
+  zs = values.z;
+  os = values.o;
+  ts = values.t;
+  await startTesting();
+  while (bag.length !== 0 || current) {
+    switch (current) {
+      case 't':
+        await t();
+        break;
+
+      case 'i':
+        await i();
+        break;
+
+      case 'o':
+        await o();
+        break;
+
+      case 's':
+        await s();
+        break;
+
+      case 'j':
+        await j();
+        break;
+
+      case 'l':
+        await l();
+        break;
+
+      case 'z':
+        await z();
+        break;
+
+      default:
+    }
+  }
+  return stopTesting();
+};

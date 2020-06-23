@@ -20,14 +20,21 @@
     "prepare": "yarn run compile",
     "pretest": "yarn run compile",
     "posttest": "yarn run check",
-    "start": "tsc && node build/src/index.js"
+    "start": "tsc && node build/src/index.js",
+    "unit": "nyc --reporter=lcov --reporter=text mocha",
+    "coverage": "codecov"
   },
   "devDependencies": {
     "@types/axios": "0.14.0",
+    "@types/mocha": "^7.0.2",
     "@types/node": "13.13.12",
     "axios": "0.19.2",
     "better-docs": "2.0.1",
+    "codecov": "^3.7.0",
+    "eslint-plugin-mocha": "^7.0.1",
     "gts": "2.0.2",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
     "querystring": "0.2.0",
     "taffydb": "2.7.3",
     "typescript": "3.9.5"
@@ -40,5 +47,10 @@
     "http": "^0.0.1-security",
     "robotjs": "^0.6.0",
     "socket.io": "^2.3.0"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ]
   }
 }
