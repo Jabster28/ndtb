@@ -419,7 +419,7 @@ const s = async () => {
         ss++;
       }
     } else if (style === 3) {
-      if (canHold()&& !os) {
+      if (canHold() && !os) {
         console.log(`${current?.yellow} no O, holding`);
         await hold(current);
       } else {
@@ -895,7 +895,7 @@ const t = async () => {
         await hd();
         ts++;
       } else if (js >= 2) {
-        if (canHold()&& !(bag[0] === 'z' && is >= 2 && os < 2)) {
+        if (canHold() && !(bag[0] === 'z' && is >= 2 && os < 2)) {
           console.log(`${current?.yellow} J exists but L doesn't, holding`);
           await hold(current);
         } else {
@@ -907,7 +907,7 @@ const t = async () => {
           canDo(false);
         }
       } else if (ls >= 2) {
-        if (canHold()&& bag[0] === 'z' && is >= 2 && os < 2) {
+        if (canHold() && bag[0] === 'z' && is >= 2 && os < 2) {
           console.log(`${current?.yellow} Z next, no I, holding`);
         } else {
           console.log(`${current?.green} T piece, can't hold, doing tsd`);
@@ -923,7 +923,7 @@ const t = async () => {
           ts++;
         }
       } else {
-        if (canHold()&& bag[0] !== 'z') {
+        if (canHold() && bag[0] !== 'z') {
           console.log(`${current?.yellow} holding`);
           await hold(current);
         } else {
