@@ -5,252 +5,40 @@ import express from 'express';
 import {join} from 'path';
 import 'colors';
 import * as robot from 'robotjs';
+import {
+  calcStuff,
+  Piece,
+  current,
+  setCurrent,
+  hd,
+  sd,
+  onHD,
+  startTesting,
+  stopTesting,
+  fail,
+  das,
+  left,
+  right,
+  cw,
+  ccw,
+  one80,
+  bag,
+  setBag,
+  canDo,
+  canHold,
+  hold,
+  sleep,
+} from './helpers';
+// stuff
 const app = express();
 const server = createServer(app);
 const io = socket(server);
 
-/**
- * @typedef {(string|undefined)} Piece - A string that represents a Tetris mino, can be undefined
- */
-declare type Piece = 't' | 'i' | 'o' | 's' | 'z' | 'l' | 'j' | undefined;
-
-// some vars
+canHold(true);
+canDo(true);
 let run = true;
 let spin = true;
-/**
- * Whether the current state of the board can be used to complete a New DT Cannon. If this is false, the bot essentially gives up.
- * @type {boolean}
- */
-let canDo = true;
-/**
- * Object with X and Y of where to check for the current piece. Every piece should overlap this pixel.
- * @type {Object<string,number>}
- */
-const currentPos: {[dim: string]: number} = {
-  x: 630,
-  y: 135,
-};
-/**
- * Array of objects with X and Y of where to check for the next pieces. Every piece should overlap the pixels.
- * @type {Array<Object<string,number>>}
- */
-const nextPos: {[dim: string]: number}[] = [
-  {
-    x: 826,
-    y: 230,
-  },
-];
-let hex = '';
-/** @type {Piece} */
-let current: Piece = undefined;
-/**
- * The currently held piece. Undefined if nothing is held
- * @type {Piece}
- */
-let heldPiece: Piece = undefined;
-/**
- * The last known piece in the matrix. Used for if gravity is enabled and the piece has moved from the recognition position
- * @type {Piece}
- */
-let lastPiece: Piece = undefined;
-/**
- * List of pieces in the "Next" section
- * @type {Piece[]}
- */
-let bag: Piece[] = [];
-/**
- * Object mapping the hex colors of pieces in the matrix to their piece name
- * @type {Object<string,Piece>}
- */
-const currentPieceMap: {[hexColor: string]: Piece} = {
-  a9fd5e: 's',
-  eb47ce: 't',
-  '00fcb9': 'i',
-  ffd455: 'o',
-  '6649dd': 'j',
-  ff7f43: 'l',
-  ff3244: 'z',
-};
-/**
- * Array of objects mapping the hex colors of pieces in the next box to their piece name
- * @type {Array<Object<string,Piece>>}
- */
-const nextPieceMap: {[hexColor: string]: Piece}[] = [
-  {
-    ae469a: 't',
-    bc6941: 'l',
-    '84b84e': 's',
-    be3943: 'z',
-    '4fe6b8': 'i',
-    '5947a4': 'j',
-    e6c970: 'o',
-  },
-];
-
-// functions
-
-/**
- * Sleep function
- * @param {number} ms Time to sleep in milliseconds
- */
-const sleep = (ms: number) => {
-  return new Promise(res => {
-    return setTimeout(res, ms);
-  });
-};
-
-/**
- * Calculates which piece is in play and the current bag
- */
-const calcStuff = async function () {
-  // console.log('start');
-  // console.log(`current piece ${current}`);
-  // console.log(`current bag ${bag}`);
-  // console.log(`last piece ${lastPiece}`);
-  // console.log(`last bag ${lastBag}`);
-
-  bag = [];
-  await sleep(3);
-
-  hex = robot.getPixelColor(currentPos.x, currentPos.y);
-  current = currentPieceMap[hex];
-  // console.log(current);
-  // console.log(hex);
-  // if (current === undefined) {
-  //   var hex = robot.getPixelColor(x, y + 22);
-  //   // @ts-ignore
-  //   current = pieceMap.current[hex];
-  //   console.log(current);
-  //   console.log(hex);
-  //   s;
-  // }
-  if (current !== undefined) {
-    lastPiece = current;
-  }
-  // console.log(`hex current ${hex}`);
-  // next piece
-  hex = robot.getPixelColor(nextPos[0].x, nextPos[0].y);
-
-  bag.push(nextPieceMap[0][hex]);
-  // console.log(`hex next ${hex}`);
-
-  // console.log(`current is ${current}`);
-  // console.log(`next is ${bag[0]}`);
-  if (current === undefined) {
-    current = lastPiece;
-  }
-
-  // console.log('end');
-  // console.log(`current piece ${current}`);
-  // console.log(`last piece ${lastPiece}`);
-  await sleep(10);
-};
-
-/**
- * DAS all the way to the specified direction
- * @param {boolean} [right=true] Whether the piece should go right or not. Defaults to true
- * @category PieceMovement
- */
-const das = async (right = true) => {
-  if (right) {
-    robot.keyToggle('right', 'down');
-    await sleep(30);
-    robot.keyToggle('right', 'up');
-    await sleep(5);
-  } else {
-    robot.keyToggle('left', 'down');
-    await sleep(30);
-    robot.keyToggle('left', 'up');
-    await sleep(5);
-  }
-};
-/**
- * Soft drops the current piece
- * @category PieceMovement
- */
-const sd = async () => {
-  robot.keyToggle('down', 'down');
-  await sleep(20);
-  robot.keyToggle('down', 'up');
-  await sleep(5);
-};
-/**
- * Hard drops the current piece
- * @category PieceMovement
- */
-const hd = async () => {
-  io.emit('hd');
-  robot.keyTap('space');
-  canHold = true;
-  await calcStuff();
-  // console.log(
-  //   `is ${is} ts ${ts} ls ${ls} js ${js} zs ${zs} ss ${ss} os ${os}`
-  // );
-};
-/**
- * Tries to hold the specified {@link Piece} and sets it to {@link heldPiece}. If it can't, it sets {@link canDo} to false
- * @param {Piece} piece - The piece to hold
- * @category PieceMovement
- */
-const hold = async (piece: Piece) => {
-  if (piece === undefined) return;
-  if (!canHold) {
-    console.log(
-      `${'failed'.red} tried to force hold ${current?.green}, but ${
-        heldPiece?.red
-      } is already held`
-    );
-    canDo = false;
-  }
-  robot.keyTap('c');
-  heldPiece = piece;
-  lastPiece = undefined;
-  current = undefined;
-  canHold = false;
-  await sleep(40);
-};
-/**
- * Rotates clockwise
- * @category PieceMovement
- */
-const cw = async () => {
-  robot.keyTap('up');
-};
-/**
- * Rotates counter-clockwise
- * @category PieceMovement
- */
-const ccw = async () => {
-  robot.keyTap('z');
-};
-/**
- * Does a 180 spin
- * @category PieceMovement
- */
-const one80 = async () => {
-  robot.keyTap('a');
-};
-/**
- * Moves one square right
- * @category PieceMovement
- */
-const right = async () => {
-  robot.keyTap('right');
-};
-/**
- * Moves one square left
- * @category PieceMovement
- */
-const left = async () => {
-  robot.keyTap('left');
-};
-
-// stuff
-/**
- * Whether the current piece can be swapped for "hold"
- * @type {boolean}
- */
-let canHold = true;
+// testing
 /**
  * Which bag opener will the bot using. Can be any number from 1-3
  * @type {number}
@@ -262,7 +50,7 @@ let style: number | null = null;
  */
 let pcType: string | undefined = undefined;
 let pcStep: string | undefined = undefined;
-console.log(pcStep);
+pcStep;
 /** How many O's have been placed since the last Perfect Clear
  * @type {number}
  * @category PieceCounters
@@ -340,7 +128,7 @@ const o = async () => {
               'L, S and T'.red
             } pieces have already been dropped`
           );
-          canDo = false;
+          canDo(false);
         } else if (!ts) {
           console.log(
             `${current?.green} two left drop, because there's an L but no T`
@@ -495,7 +283,7 @@ const i = async () => {
     } else if (style === null) {
       if (bag[0] === 't') {
         style = 3;
-      } else if (canHold) {
+      } else if (canHold()) {
         console.log(`${current?.yellow} holding, because no style`);
         await hold(current);
       } else {
@@ -629,7 +417,7 @@ const s = async () => {
         ss++;
       }
     } else if (style === 3) {
-      if (canHold && !os) {
+      if (canHold()&& !os) {
         console.log(`${current?.yellow} no O, holding`);
         await hold(current);
       } else {
@@ -837,7 +625,7 @@ const j = async () => {
       if (ts || zs) {
         if (is) {
           console.log(`${'failed'.red} style two, T and I exist, can't drop J`);
-          canDo = false;
+          canDo(false);
         } else {
           console.log(`${current?.green} style two, T exists, doing a funky`);
           await cw();
@@ -1105,7 +893,7 @@ const t = async () => {
         await hd();
         ts++;
       } else if (js >= 2) {
-        if (canHold && !(bag[0] === 'z' && is >= 2 && os < 2)) {
+        if (canHold()&& !(bag[0] === 'z' && is >= 2 && os < 2)) {
           console.log(`${current?.yellow} J exists but L doesn't, holding`);
           await hold(current);
         } else {
@@ -1114,10 +902,10 @@ const t = async () => {
               'J'.red
             } piece exists without the L`
           );
-          canDo = false;
+          canDo(false);
         }
       } else if (ls >= 2) {
-        if (canHold && bag[0] === 'z' && is >= 2 && os < 2) {
+        if (canHold()&& bag[0] === 'z' && is >= 2 && os < 2) {
           console.log(`${current?.yellow} Z next, no I, holding`);
         } else {
           console.log(`${current?.green} T piece, can't hold, doing tsd`);
@@ -1133,7 +921,7 @@ const t = async () => {
           ts++;
         }
       } else {
-        if (canHold && bag[0] !== 'z') {
+        if (canHold()&& bag[0] !== 'z') {
           console.log(`${current?.yellow} holding`);
           await hold(current);
         } else {
@@ -1196,7 +984,7 @@ const start = async () => {
   run = true;
   console.log('ready'.bold);
   while (run) {
-    if (canDo) {
+    if (canDo()) {
       await calcStuff();
       // console.log(style);
       // if (!bag[0]) continue;
