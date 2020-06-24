@@ -32,6 +32,7 @@ import {
   canHold,
   hold,
   sleep,
+  heldPiece,
 } from './helpers';
 // stuff
 const app = express();
@@ -50,8 +51,8 @@ let style: number | null = null;
  * Which perfect clear type will the bot using. Can be k (kaidan, stairs), a (anchor) or t (tsm>tetris)
  * @type {number}
  */
-let pcType: string | undefined = undefined;
-let pcStep: string | undefined = undefined;
+let pcType: string | null = null;
+let pcStep: string | null = null;
 pcStep;
 /** How many O's have been placed since the last Perfect Clear
  * @type {number}
@@ -204,7 +205,7 @@ const o = async () => {
     }
   } else if (os === 3) {
     if (ts >= 3) {
-      if (pcType === undefined) {
+      if (pcType === null) {
         if (bag[0] === 'i' || (js >= 2 && ss >= 2 && zs >= 2)) {
           console.log(`${current?.blue} no pcType, i next, setting to kaidan`);
           pcType = 'k';
@@ -346,7 +347,7 @@ const i = async () => {
       await hold(current);
     }
   } else if (is === 3) {
-    if (pcType === undefined || pcType === 'k') {
+    if (pcType === null || pcType === 'k') {
       // kaidan method
       if (js >= 3 && zs >= 3 && ss >= 3) {
         if (os >= 4) {
@@ -478,7 +479,7 @@ const s = async () => {
       await hold(current);
     }
   } else if (ss === 3) {
-    if (pcType === undefined) {
+    if (pcType === null) {
       if (bag[0] === 'l') {
         console.log(`${current?.blue} no pcType, L next, kaidan`);
         pcType = 'k';
@@ -1023,8 +1024,8 @@ const start = async () => {
         default:
       }
     } else {
-      pcType = undefined;
-      pcStep = undefined;
+      pcType = null;
+      pcStep = null;
       style = null;
 
       os = 0;
@@ -1084,11 +1085,20 @@ export const test = async (
   values: {[piece: string]: number}
 ) => {
   console.log('Running test...');
-  setBag(newBag);
-  onHD(() => {
-    console.log(current.green);
-    setCurrent(bag[0]);
-    bag.shift();
+  setBag(JSON.parse(JSON.stringify(newBag)));
+  onHD(async (hold = false) => {
+    console.log(`hard dropping/holding ${current.green}..`);
+    console.log(bag);
+    console.log(current);
+    if (hold) {
+      setCurrent(heldPiece);
+      console.log('set current to held');
+    } else {
+      setCurrent(bag[0]);
+      console.log('set current to next');
+      console.log(bag.shift()?.green);
+      console.log('shifted bag');
+    }
   });
   setCurrent(bag[0]);
   bag.shift();
@@ -1099,8 +1109,16 @@ export const test = async (
   zs = values.z;
   os = values.o;
   ts = values.t;
+  pcStep = null;
+  pcType = null;
+  style = null;
   await startTesting();
-  while (bag.length !== 0 || current) {
+  while (bag.length !== 0 || current !== '') {
+    console.log('bag l ' + bag.length);
+    console.log('bag');
+    console.log(bag);
+    console.log('current');
+    console.log(current);
     switch (current) {
       case 't':
         await t();
@@ -1129,9 +1147,11 @@ export const test = async (
       case 'z':
         await z();
         break;
-
       default:
     }
+    console.log('bag ' + bag);
+    if (current === undefined) setCurrent('');
+    console.log('cur ' + current);
   }
   return stopTesting();
 };

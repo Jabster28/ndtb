@@ -3,13 +3,13 @@ import * as robot from 'robotjs';
 let canhold = false;
 let cando = false;
 let testing = false;
-let onhd = () => {};
-const moves: string[] = [];
+let onhd: () => void;
+let moves: string[] = [];
 export const startTesting = () => {
-  // console.log("Oh, so we're testing now? Cool!");
+  moves = [];
   testing = true;
 };
-export const onHD = (e: () => void) => {
+export const onHD = (e: () => Promise<void>) => {
   onhd = e;
 };
 export const setBag = (e: Piece[]) => {
@@ -17,6 +17,9 @@ export const setBag = (e: Piece[]) => {
 };
 export const setCurrent = (e: Piece) => {
   current = e;
+};
+export const setLastPiece = (e: Piece) => {
+  lastPiece = e;
 };
 export const stopTesting = () => {
   // console.log('Tests are over already? Well it was fun while it lasted :D');
@@ -138,9 +141,10 @@ export const calcStuff = async function () {
 
   bag = [];
   await sleep(3);
-
-  hex = robot.getPixelColor(currentPos.x, currentPos.y);
-  current = currentPieceMap[hex];
+  if (!testing) {
+    hex = robot.getPixelColor(currentPos.x, currentPos.y);
+    current = currentPieceMap[hex];
+  }
   // console.log(current);
   // console.log(hex);
   // if (current === undefined) {
@@ -156,11 +160,12 @@ export const calcStuff = async function () {
   }
   // console.log(`hex current ${hex}`);
   // next piece
-  hex = robot.getPixelColor(nextPos[0].x, nextPos[0].y);
+  if (!testing) {
+    hex = robot.getPixelColor(nextPos[0].x, nextPos[0].y);
 
-  bag.push(nextPieceMap[0][hex]);
-  // console.log(`hex next ${hex}`);
-
+    bag.push(nextPieceMap[0][hex]);
+    // console.log(`hex next ${hex}`);
+  }
   // console.log(`current is ${current}`);
   // console.log(`next is ${bag[0]}`);
   if (current === undefined) {
@@ -210,11 +215,11 @@ export const sd = async () => {
 export const hd = async () => {
   if (!testing) robot.keyTap('space');
   canHold(true);
-  await calcStuff();
+  if (!testing) await calcStuff();
   // console.log(
   //   `is ${is} ts ${ts} ls ${ls} js ${js} zs ${zs} ss ${ss} os ${os}`
   // );
-  onhd();
+  await onhd();
   if (testing) moves.push('hd');
 };
 /**
@@ -238,7 +243,7 @@ export const hold = async (piece: Piece) => {
   current = '';
   canHold(false);
   await sleep(40);
-  onhd();
+  await onhd();
   if (testing) moves.push('hold');
 };
 /**
