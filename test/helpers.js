@@ -39,9 +39,11 @@ describe('Testing helper functions', () => {
     assert.equal(help.lastPiece, 'l');
   });
   it('onhd runs function', done => {
+    help.startTesting();
     help.onHD(() => {
       done();
     });
     help.hd();
   });
+  help.stopTesting();
 });
