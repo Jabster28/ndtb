@@ -23,9 +23,12 @@ describe('Testing helper functions', () => {
     assert.equal(help.canDo(), true);
   });
   it('sets last used piece to current piece', async () => {
+    help.startTesting();
     help.setLastPiece('l');
+    help.setCurrent('');
     await help.calcStuff();
-    assert.equal(help.current, 'l');
+    help.stopTesting();
+    assert.equal(help.getCurrent(), 'l');
   });
   it('sets current piece to last used', async () => {
     help.setCurrent('l');

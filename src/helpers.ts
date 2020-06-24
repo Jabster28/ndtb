@@ -18,6 +18,9 @@ export const setBag = (e: Piece[]) => {
 export const setCurrent = (e: Piece) => {
   current = e;
 };
+export const getCurrent = (): Piece => {
+  return current;
+};
 export const setLastPiece = (e: Piece) => {
   lastPiece = e;
 };
@@ -155,7 +158,7 @@ export const calcStuff = async function () {
   //   console.log(hex);
   //   s;
   // }
-  if (current !== undefined) {
+  if (current !== undefined && current !== '') {
     lastPiece = current;
   }
   // console.log(`hex current ${hex}`);
@@ -168,7 +171,7 @@ export const calcStuff = async function () {
   }
   // console.log(`current is ${current}`);
   // console.log(`next is ${bag[0]}`);
-  if (current === undefined) {
+  if (current === undefined || current === '') {
     current = lastPiece;
   }
 

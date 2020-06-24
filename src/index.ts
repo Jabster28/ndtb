@@ -33,6 +33,7 @@ import {
   hold,
   sleep,
   heldPiece,
+  getCurrent,
 } from './helpers';
 // stuff
 const app = express();
@@ -1150,7 +1151,7 @@ export const test = async (
       default:
     }
     console.log('bag ' + bag);
-    if (current === undefined) setCurrent('');
+    if (getCurrent() === undefined) setCurrent('');
     console.log('cur ' + current);
   }
   return stopTesting();
