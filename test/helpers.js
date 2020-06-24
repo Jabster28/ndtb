@@ -31,8 +31,11 @@ describe('Testing helper functions', () => {
     assert.equal(help.getCurrent(), 'l');
   });
   it('sets current piece to last used', async () => {
+    help.startTesting();
+    help.setLastPiece('');
     help.setCurrent('l');
     await help.calcStuff();
+    help.stopTesting();
     assert.equal(help.lastPiece, 'l');
   });
   it('onhd runs function', done => {
