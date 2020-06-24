@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const e = require('../build/src/index.js');
+const main = require('../build/src/index.js');
 const assert = require('assert');
 const originalLogFunction = console.log;
 let output;
@@ -16,8 +16,9 @@ afterEach(function () {
   }
 });
 describe('Testing basic patterns', () => {
-  it('holds I at start', async () => {
-    return e
+  it('holds I at start', done => {
+    console.log('start async');
+    main
       .test(['i'], {
         i: 0,
         o: 0,
@@ -29,17 +30,56 @@ describe('Testing basic patterns', () => {
       })
       .then(res => {
         assert.equal(res.toString(), ['hold'].toString());
+        done();
+      })
+      .catch(err => {
+        done(err);
       });
   });
-  // const testCase = configureTestCase('allow-js/with-outDir', {
-  //   jestConfig: {testMatch: null, testRegex: '(foo|bar)\\.spec\\.[jt]s$'},
-  // });
-
-  // testCase.runWithTemplates(allValidPackageSets, 0, (runTest, {testLabel}) => {
-  //   it(testLabel, () => {
-  //     const result = runTest();
-  //     expect(result.status).toBe(0);
-  //     expect(result).toMatchSnapshot();
-  //   });
-  // });
+  it('does style two', done => {
+    console.log('prestart');
+    main
+      .test(['j', 'l', 's', 'z', 'i', 'o', 't'], {
+        i: 0,
+        o: 0,
+        s: 0,
+        z: 0,
+        l: 0,
+        j: 0,
+        t: 0,
+      })
+      .then(res => {
+        assert.equal(
+          res.toString(),
+          'ccw,r,hd,das,cw,l,hd,cw,das,hd,ccw,hd,cw,r,hd,das,hd,hd'
+        );
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
+  });
+  it('does kaidan when early L', done => {
+    console.log('prestart');
+    main
+      .test(['l', 'o', 'z', 'i', 'j', 's', 't'], {
+        i: 3,
+        o: 3,
+        s: 3,
+        z: 3,
+        l: 3,
+        j: 3,
+        t: 3,
+      })
+      .then(res => {
+        assert.equal(
+          res.toString(),
+          'cw,das,sd,r,hd,das,sd,l,hd,hd,cw,das,hd,cw,r,r,hd,cw,das,hd,ccw,das,r,sd,ccw,hd'
+        );
+        done();
+      })
+      .catch(err => {
+        done(err);
+      });
+  });
 });
