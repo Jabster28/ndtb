@@ -11,12 +11,19 @@ jobs:
     name: Upload Assets
     runs-on: ubuntu-latest
     steps:
-    - name: Upload assets
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: https://github.com/Jabster28/ndtb/releases/latest
-        asset_path: ./build/src/compiledIndex.js
-        asset_name: index.min.js
-        asset_content_type: text/javascript
+      - name: Compile
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: sudo apt-get install libxtst-dev
+      - run: yarn
+      - run: yarn compile
+      - name: Upload assets
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: https://github.com/Jabster28/ndtb/releases/latest
+          asset_path: ./build/src/compiledIndex.js
+          asset_name: index.min.js
+          asset_content_type: text/javascript
