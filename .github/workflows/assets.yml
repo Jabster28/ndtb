@@ -1,0 +1,22 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Upload Assets
+
+jobs:
+  build:
+    name: Upload Assets
+    runs-on: ubuntu-latest
+    steps:
+    - name: Upload assets
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: https://github.com/Jabster28/ndtb/releases/latest
+        asset_path: ./build/src/compiledIndex.js
+        asset_name: index.min.js
+        asset_content_type: text/javascript
