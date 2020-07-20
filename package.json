@@ -30,7 +30,7 @@
     "@types/node": "13.13.12",
     "axios": "0.19.2",
     "better-docs": "2.3.0",
-    "codecov": "3.7.0",
+    "codecov": "3.7.1",
     "eslint-plugin-mocha": "7.0.1",
     "gts": "2.0.2",
     "jsdoc": "3.6.4",
