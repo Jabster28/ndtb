@@ -56,8 +56,8 @@ export const canHold = function (val?: boolean): boolean | void {
  * @type {Object<string,number>}
  */
 export const currentPos: {[dim: string]: number} = {
-  x: 630,
-  y: 135,
+  x: 629,
+  y: 143,
 };
 /**
  * Array of objects with X and Y of where to check for the next pieces. Every piece should overlap the pixels.
@@ -65,8 +65,8 @@ export const currentPos: {[dim: string]: number} = {
  */
 export const nextPos: {[dim: string]: number}[] = [
   {
-    x: 826,
-    y: 230,
+    x: 831,
+    y: 232,
   },
 ];
 export let hex = '';
@@ -98,13 +98,13 @@ export type Piece = 't' | 'i' | 'o' | 's' | 'z' | 'l' | 'j' | '';
  * @type {Object<string,Piece>}
  */
 export const currentPieceMap: {[hexColor: string]: Piece} = {
-  a9fd5e: 's',
-  eb47ce: 't',
-  '00fcb9': 'i',
-  ffd455: 'o',
-  '6649dd': 'j',
-  ff7f43: 'l',
-  ff3244: 'z',
+  '6dff83': 's',
+  ff5fe5: 't',
+  '21f1fd': 'i',
+  fefe66: 'o',
+  '00acf9': 'j',
+  ffc751: 'l',
+  ff765e: 'z',
 };
 /**
  * Array of objects mapping the hex colors of pieces in the next box to their piece name
@@ -112,13 +112,13 @@ export const currentPieceMap: {[hexColor: string]: Piece} = {
  */
 export const nextPieceMap: {[hexColor: string]: Piece}[] = [
   {
-    ae469a: 't',
-    bc6941: 'l',
-    '84b84e': 's',
-    be3943: 'z',
-    '4fe6b8': 'i',
-    '5947a4': 'j',
-    e6c970: 'o',
+    b851a7: 't',
+    f29447: 'l',
+    '5ac66a': 's',
+    f46052: 'z',
+    '35b0da': 'i',
+    '0384ba': 'j',
+    f8d25a: 'o',
   },
 ];
 

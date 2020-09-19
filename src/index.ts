@@ -439,8 +439,10 @@ const s = async () => {
       }
     } else {
       if (bag[0] === 'i') {
-        console.log(`${current?.blue} no style yet, I is next, setting to one`);
-        style = 1;
+        console.log(
+          `${current?.blue} no style yet, I is next, setting to three`
+        );
+        style = 3;
       } else {
         console.log(`${current?.blue} no style yet, setting to two`);
         style = 2;
@@ -700,7 +702,7 @@ const j = async () => {
     }
   } else if (js === 3) {
     if (ss >= 3) {
-      if (is >= 4 && os < 4) {
+      if (is >= 4 && os >= 4) {
         console.log(`${current?.green} JS 3, S and I, I exists, dropping`);
         await cw();
         // await das();
@@ -1054,7 +1056,9 @@ if (!mocha) {
     const socket = s.default;
     const server = createServer(app);
     const io = socket(server);
-
+    onHD(async () => {
+      io.emit('hd');
+    });
     app.use('/doc', express.static('out'));
     app.get('/admin', (_req, res) => {
       res.sendFile(join(__dirname, 'admin.html'));
