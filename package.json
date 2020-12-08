@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/axios": "0.14.0",
     "@types/mocha": "7.0.2",
-    "@types/node": "13.13.33",
+    "@types/node": "13.13.34",
     "axios": "0.19.2",
     "better-docs": "2.3.2",
     "codecov": "3.7.1",
