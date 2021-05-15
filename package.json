@@ -33,7 +33,7 @@
     "codecov": "3.8.2",
     "eslint-plugin-mocha": "7.0.1",
     "gts": "2.0.2",
-    "jsdoc": "3.6.6",
+    "jsdoc": "3.6.7",
     "mocha": "8.0.1",
     "nyc": "15.1.0",
     "querystring": "0.2.1",
