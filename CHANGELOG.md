@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://www.github.com/Jabster28/ndtb/compare/v1.0.1...v1.0.2) (2021-05-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency socket.io to v2.4.0 [security] ([151fcab](https://www.github.com/Jabster28/ndtb/commit/151fcabee670aac0b4615724b0b667629b2545df))
+
 ## 1.0.0 (2020-07-02)
 
 
