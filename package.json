@@ -28,7 +28,7 @@
     "@types/axios": "0.14.0",
     "@types/mocha": "7.0.2",
     "@types/node": "13.13.52",
-    "axios": "0.21.1",
+    "axios": "0.21.2",
     "better-docs": "2.3.2",
     "codecov": "3.8.2",
     "eslint-plugin-mocha": "7.0.1",
