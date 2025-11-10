@@ -25,7 +25,7 @@
     "coverage": "codecov"
   },
   "devDependencies": {
-    "@types/axios": "0.14.0",
+    "@types/axios": "0.14.4",
     "@types/mocha": "8.2.3",
     "@types/node": "13.13.52",
     "axios": "0.21.1",
